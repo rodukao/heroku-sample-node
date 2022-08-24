@@ -1,6 +1,11 @@
 var mysql = require('mysql');
-const db_connection = require('./database-connection')
-const connection = mysql.createConnection(db_connection)
+
+var connection = mysql.createConnection({
+  host     : process.env.host,
+  user     : process.env.user,
+  password : process.env.password,
+  database : process.env.database
+});
 
 //EXPRESS
 const express = require('express')
@@ -12,8 +17,8 @@ const port = process.env.PORT || 3000
 connection.connect();
 connection.query('SELECT * FROM usuarios', function (error, results, fields) {
   if (error) throw error;
-  app.get('/', (req, res) => {
-    res.send(results[0])
+    app.get('/', (req, res) => {
+    res.send(results)
   })
 });
 connection.end();
