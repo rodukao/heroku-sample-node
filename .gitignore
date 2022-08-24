@@ -13,3 +13,4 @@ docker-compose.yml
 
 # Database settings
 database-connection.json
+.env
