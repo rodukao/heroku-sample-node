@@ -1,0 +1,21 @@
+ul{
+    background-color:#0d6efd;
+    display: flex;
+    list-style: none;
+    justify-content: end;
+    padding-right:20px;
+}
+
+ul li{
+    
+    padding:10px 10px;
+}
+
+ul li a{
+    color:white;
+    text-decoration: none;
+}
+
+ul li a:hover{
+    color:cadetblue;
+}
