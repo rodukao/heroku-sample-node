@@ -8,15 +8,6 @@ const port = process.env.PORT || 3000
 //DOTENV
 require('dotenv').config()
 
-//MYSQL
-var mysql = require('mysql')
-var connection = mysql.createConnection({
-  host     : process.env.host,
-  user     : process.env.user,
-  password : process.env.password,
-  database : process.env.database
-})
-
 const publicDirectory = path.join(__dirname, './public')
 app.use(express.static(publicDirectory))
 
