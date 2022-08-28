@@ -12,9 +12,13 @@
     <nav>
         <ul class="primary">
             <li><a href="/">Home</a></li>
+            <li><a href="/login">Login</a></li>
             <li><a href="/register">Register</a></li>
         </ul>
     </nav>
+    {{#if message}}
+        <h5 class="alert alert-success mt-5">{{ message }}</h5>
+    {{/if}}
     <main class="container mt-5">
         <div class="container text-center">
             <div class="row">
