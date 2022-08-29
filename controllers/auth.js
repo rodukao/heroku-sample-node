@@ -1,4 +1,3 @@
-const connection = require("./db")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 
@@ -6,20 +5,18 @@ exports.register = (req, res) => {
 
     const { nome, email, senha, confirm, formFila, objetivo } = req.body
     
+    const connection = require("./db")
     connection.query("SELECT email FROM usuarios WHERE email = ?", [email], async (error, result) => {
         if(error){
-            //connection.end()
             console.log(error)
         }
 
         if(result.length > 0){
-            //connection.end()
             return res.render('register', {
                 message: "Email já registrado."
             })
         }
         else if (senha !== confirm){
-            //connection.end()
             return res.render('register', {
                 message: "Senha e confirmação precisam ser iguais."
             })
@@ -32,7 +29,7 @@ exports.register = (req, res) => {
                 if(error) {
                     throw error
                 }
-                console.log(result)
+
                 })
                 connection.end()
                 return res.render('./', {
@@ -44,7 +41,9 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
     const { email, senha } = req.body
-    connection.query(`SELECT email, senha FROM usuarios WHERE email = '${email}'`, (error, result) => {
+
+    const connection = require("./db")
+    connection.query(`SELECT email, senha FROM usuarios WHERE email = '${email}'`, async (error, result) => {
         if(error) throw error
         
         if(result.length == 0) {
@@ -52,11 +51,17 @@ exports.login = (req, res) => {
                 message: "Email não encontrado"
             })
         } else {
-            console.log(`${result[0]}`)
-            connection.end()
-            return res.render('register', {
-                message: "LALALALA"
-            })
+
+            const compare = await bcrypt.compare(senha, result[0].senha);
+            if(compare){
+                return res.render('./', {
+                    message: "Logado com sucesso"
+                })
+            } else {
+                return res.render('login', {
+                    message: "Senha incorreta"
+                })
+            }
         }
-    }) 
+    })
 }
