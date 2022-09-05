@@ -5,12 +5,6 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
-//EXPRESS SESSION
-const session = require('express-session');
-
-//PASSPORT
-var passport = require('passport');
-
 //DOTENV
 require('dotenv').config()
 

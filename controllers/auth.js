@@ -43,11 +43,11 @@ exports.register = (req, res) => {
 
 exports.login = (req, res) => {
 
-    const { email, senha } = req.body
+    const { id, email, senha } = req.body
     connection.getConnection(function(err, poolConnection) {
         if(err) console.log('Connection error: ', err)
         else{
-            poolConnection.query(`SELECT email, senha FROM usuarios WHERE email = '${email}'`, async (error, result) => {
+            poolConnection.query(`SELECT id, email, senha FROM usuarios WHERE email = '${email}'`, async (error, result) => {
                 if(error) throw error
                 
                 if(result.length == 0) {
@@ -58,9 +58,8 @@ exports.login = (req, res) => {
         
                     const compare = await bcrypt.compare(senha, result[0].senha);
                     if(compare){
-                        return res.render('./', {
-                            message: "Logado com sucesso"
-                        })
+                        res.cookie('userID', result[0].id, {path: '/'}, {maxAge: 10800})
+                        return res.redirect('../');
                     } else {
                         return res.render('login', {
                             message: "Senha incorreta"
@@ -72,46 +71,3 @@ exports.login = (req, res) => {
         }
     })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-    /*pool.getConnection(function(err, poolConnection) {
-        if (err)
-            console.log('Connection error: ', err);
-        else{
-            connection.query(`SELECT email, senha FROM usuarios WHERE email = '${email}'`, async (error, result) => {
-                if(error) throw error
-                
-                if(result.length == 0) {
-                    return res.render('login', {
-                        message: "Email não encontrado"
-                    })
-                } else {
-        
-                    const compare = await bcrypt.compare(senha, result[0].senha);
-                    if(compare){
-                        return res.render('./', {
-                            message: "Logado com sucesso"
-                        })
-                    } else {
-                        return res.render('login', {
-                            message: "Senha incorreta"
-                        })
-                    }
-                }
-            })
-        }
-
-        connection.release();
-    });
-    
-}*/
