@@ -4,7 +4,7 @@ const connection = require("./db")
 
 exports.register = (req, res) => {
 
-    const { nome, email, senha, confirm, formFila, objetivo } = req.body
+    const { nome, email, senha, confirm, formFila, nascimento } = req.body
 
     connection.getConnection(function(err, poolConnection) {
         if(err) console.log('Connection error: ', err)
@@ -28,12 +28,10 @@ exports.register = (req, res) => {
         
                 else {
                     let senhaCriptografada = await bcrypt.hash(senha, 8)
-                    connection.query(`INSERT INTO usuarios (nome, email, senha, meta) values ('${nome}', '${email}', '${senhaCriptografada}', '${objetivo}')`, (error, result) => {
+                    connection.query(`INSERT INTO usuarios (nome, email, senha, nascimento) values ('${nome}', '${email}', '${senhaCriptografada}', '${nascimento}')`, (error, result) => {
                         if(error) throw error        
                     })
-                        return res.render('./', {
-                            message : "Usuário cadastrado com sucesso."
-                    }) 
+                        return res.redirect('../login') 
                 }   
             })
             poolConnection.release()  
@@ -68,6 +66,26 @@ exports.login = (req, res) => {
                 }
             })
             poolConnection.release()
+        }
+    })
+}
+
+exports.configuration = (req, res) => {
+    const userCookie = req.headers.cookie.split('=')[1]
+    const { nome, nascimento, altura, peso } = req.body
+
+    connection.getConnection(function(err, poolConnection) {
+        if(err) console.log('Connection error: ', err)
+        else{
+
+            poolConnection.query(`UPDATE usuarios SET nome = '${nome}', nascimento = '${nascimento}', altura = '${altura}', peso = '${peso}' WHERE id = ${userCookie}`, async (error, result) => {
+                if(error){
+                    throw error
+                } else {
+                    return res.redirect('../')
+                }
+            })
+            poolConnection.release()  
         }
     })
 }

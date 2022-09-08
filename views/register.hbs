@@ -9,50 +9,40 @@
     <title>DIETAS JÁ! | Cadastre-se</title>
 </head>
 <body>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    </ul>
     {{#if message}}
         <h5 class="alert alert-danger mt-5">{{ message }}</h5>
     {{/if}}
     <main class="container-sm mt-5">
-        <form action="/auth/register" method="POST">
-            <div class="mb-3">
+        <h1 class="mb-5">Cadastre-se!</h1>
+        <form action="/auth/register" method="POST" class="row g2 justify-content-md-center">
+            <div class="mb-3 col-6">
                 <label for="nome" class="form-label">Nome</label>
                 <input type="text" class="form-control" id="nome" name="nome">
             </div>
-            <div class="mb-3">
+            <div class="mb-3 col-6">
+                <label for="nascimento" class="form-label">Nascimento</label>
+                <input type="date" class="form-control" id="nascimento" name="nascimento">
+            </div>
+            <div class="mb-3 col-6">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email">
             </div>
-            <div class="mb-3">
-                <label for="senha" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="senha" name="senha">
-            </div>
-            <div class="mb-3">
-                <label for="confirm" class="form-label">Confirmação de senha</label>
-                <input type="password" class="form-control" id="confirm" name="confirm">
-            </div>
-            <div class="mb-3">
+            <div class="mb-3 col-6">
                 <label for="formFile" class="form-label">Foto de perfil</label>
                 <input class="form-control" type="file" id="formFile" name="formfile">
             </div>
-            <h4 class="mt-5 mb-3">Objetivo</h4>
-            <div class="form-check">
-            <input class="form-check-input" type="radio" name="objetivo" id="ganhar" value="ganhar">
-            <label class="form-check-label" for="ganhar">
-                Ganhar massa
-            </label>
+            <div class="mb-3 col-6">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="senha" name="senha">
             </div>
-            <div class="form-check">
-            <input class="form-check-input" type="radio" name="objetivo" id="perder" value="perder" checked>
-            <label class="form-check-label" for="perder">
-                Perder massa
-            </label>
+            <div class="mb-3 col-6">
+                <label for="confirm" class="form-label">Confirmação de senha</label>
+                <input type="password" class="form-control" id="confirm" name="confirm">
+            </div>   
+            <button type="submit" class="btn btn-primary mt-5 mb-2 col-5">Cadastrar</button>
+            <div class="text-center">
+                <span>Já é cadastrado? <a href="/login">Entrar</a></span> 
             </div>
-            <button type="submit" class="btn btn-primary mt-5">Cadastrar</button>
         </form>
     </main>
 

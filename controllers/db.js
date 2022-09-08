@@ -16,3 +16,9 @@ var connection = mysql.createPool({
 })
 
 module.exports = connection;
+
+/*
+ESTRUTURA DO DB PRA EU NÃO ESQUECER
+id | nome | email | senha | avatar | meta | refeicao_inicial
+
+*/
