@@ -44,3 +44,58 @@ ul li a:hover{
 .user-info span{
     padding: 0 7px;
 }
+
+.meta{
+    font-size: .9em;
+    text-transform: lowercase;
+    color: grey;
+}
+
+.imagem-comida{
+    width:380px;
+    height:360px;
+    background-color: #efefef;
+    border:1px solid grey;
+    border-radius:20px;
+    position: relative;
+}
+
+.info-refeicao{
+    text-align: left;
+    padding-left:30px;
+}
+
+.info-refeicao h2{
+    font-size: 3.2em;
+}
+
+.info-refeicao h3{
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 1.4em;
+}
+
+.ingredientes{
+    margin-top:20px;
+    background: none;
+}
+
+.botaoAtualizaRefeicao{
+    border-radius: 50%;
+    width:40px;
+    height:40px;
+    position: absolute;
+    bottom:20px;
+    left:50%;
+    transform: translate(-15px, 0);
+    border:none;
+}
+
+.botaoAtualizaRefeicao:hover{
+    background-color: white;
+}
+
+.botaoAtualizaRefeicao svg{
+    width:30px;
+    height:30px;
+}

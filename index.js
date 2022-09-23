@@ -17,6 +17,7 @@ app.use(express.json())
 app.set('view engine', 'hbs')
 app.use('/', require('./routes/pages'))
 app.use('/auth', require('./routes/auth'))
+app.use('/data', require('./routes/data'))
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

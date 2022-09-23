@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 const connection = require("./db")
 
@@ -72,16 +71,17 @@ exports.login = (req, res) => {
 
 exports.configuration = (req, res) => {
     const userCookie = req.headers.cookie.split('=')[1]
-    const { nome, altura, peso } = req.body
+    const { nome, altura, peso, meta, sexo } = req.body
 
     connection.getConnection(function(err, poolConnection) {
         if(err) console.log('Connection error: ', err)
         else{
 
-            poolConnection.query(`UPDATE usuarios SET nome = '${nome}', altura = '${altura}', peso = '${peso}' WHERE id = ${userCookie}`, async (error, result) => {
+            poolConnection.query(`UPDATE usuarios SET nome = '${nome}', altura = '${altura}', peso = '${peso}', meta = '${meta}', sexo = '${sexo}' WHERE id = ${userCookie}`, async (error, result) => {
                 if(error){
                     throw error
                 } else {
+                    console.log(meta)
                     return res.redirect('../')
                 }
             })

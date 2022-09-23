@@ -32,6 +32,32 @@
                 <label for="peso" class="form-label">Peso (kg)</label>
                 <input type="text" class="form-control" id="peso" name="peso" value="{{post.peso}}">
             </div>
+            <h5 class="mt-4">Sexo</h5>
+            <div class="form-check mt-3">
+                <input class="form-check-input" type="radio" name="sexo" id="masculino" value="masculino">
+                <label class="form-check-label" for="masculino">
+                    Masculino
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="sexo" id="feminino" value="feminino">
+                <label class="form-check-label" for="feminino">
+                    Feminino
+                </label>
+            </div>
+            <h5 class="mt-4">Objetivo</h5>
+            <div class="form-check mt-3">
+                <input class="form-check-input" type="radio" name="meta" id="ganhar" value="ganhar">
+                <label class="form-check-label" for="ganhar">
+                    Ganhar massa
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="meta" id="perder" value="perder">
+                <label class="form-check-label" for="perder">
+                    Perder massa
+                </label>
+            </div>
             <button type="submit" class="btn btn-primary mt-5 mb-2 col-5">Atualizar</button>
         </form>
     </main>
