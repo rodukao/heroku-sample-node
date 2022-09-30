@@ -7,7 +7,6 @@ ul{
     display: flex;
     list-style: none;
     justify-content: end;
-    padding-right:20px;
 }
 
 ul li{
@@ -51,13 +50,24 @@ ul li a:hover{
     color: grey;
 }
 
+.container-refeicoes{
+    height:85vh;
+    overflow: auto;
+}
+
+.refeicao{
+    margin-bottom: 30px;
+}
+
 .imagem-comida{
     width:380px;
     height:360px;
     background-color: #efefef;
-    border:1px solid grey;
+    border:1px solid #efefef;
     border-radius:20px;
     position: relative;
+    background-position: center;
+    background-size: cover;
 }
 
 .info-refeicao{
@@ -75,8 +85,11 @@ ul li a:hover{
     font-size: 1.4em;
 }
 
-.ingredientes{
+.accordion-item{
     margin-top:20px;
+}
+
+.ingredientes{
     background: none;
 }
 
@@ -85,7 +98,7 @@ ul li a:hover{
     width:40px;
     height:40px;
     position: absolute;
-    bottom:20px;
+    bottom:15px;
     left:50%;
     transform: translate(-15px, 0);
     border:none;
@@ -96,6 +109,7 @@ ul li a:hover{
 }
 
 .botaoAtualizaRefeicao svg{
-    width:30px;
-    height:30px;
+    width:22px;
+    height:22px;
+    color:rgb(13, 113, 243);
 }
