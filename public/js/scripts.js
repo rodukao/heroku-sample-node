@@ -28,7 +28,7 @@ fetch('../../data/user-info', { method: 'GET'})
     .then(response => response.json())
     .then((refeicaoData) => {
         
-        let categoriasRefeicoes = refeicaoData.categoria_refeicao;
+        let categoriasRefeicoes = refeicaoData.categorias;
         const containerRefeicoes = document.querySelector("#container-refeicoes")
 
         for(let i = 0; i < categoriasRefeicoes.length; i++){
@@ -61,11 +61,11 @@ fetch('../../data/user-info', { method: 'GET'})
                 </div>    
             </div>
             `
+            
+            //const numero_ingredientes = refeicaoData.length
+            //const lista_ingredientes = document.querySelector("#lista_ingredientes")
 
-            const numero_ingredientes = refeicaoData.result.length
-            const lista_ingredientes = document.querySelector("#lista_ingredientes")
-
-            for(let v = 0; v < numero_ingredientes; v++){
+            /*for(let v = 0; v < numero_ingredientes; v++){
                 let ingrediente_item = document.createElement("li")
                 ingrediente_item.classList.add("list-group-item")
                 ingrediente_item.append(refeicaoData.result[v].nome_ingrediente)
@@ -73,12 +73,27 @@ fetch('../../data/user-info', { method: 'GET'})
             }
 
             const nome_refeicaoh3 = document.querySelector(`#refeicao-${i}`)
-            nome_refeicaoh3.innerHTML = `${refeicaoData.result[0].nome_refeicao}`
+            nome_refeicaoh3.innerHTML = `${refeicaoData[0].nome_refeicao}`
 
             const card_refeicao = document.querySelector(`#card-${i}`);
             card_refeicao.style.backgroundImage = `url('/img/cafe-manha/${refeicaoData.result[0].id_refeicao}.jpg')`
+        }*/
         }
-    })
+        fetch('../../data/ingredientes', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                Café_Selecionado: `${refeicaoData.cafe_selecionado.id}`,
+                Lanche_Selecionado: `${refeicaoData.lanche_selecionado.id}`
+            })
+        })
+        .then(response => response.json())
+        .then((result) => {
+            console.log(result)
+        })
+})
    
 )
     .catch(err => console.log(err.message));
