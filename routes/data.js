@@ -57,6 +57,11 @@ router.get('/refeicao-info', async (req, res) => {
     
         let cafe_manha = []
         let lanche = []
+        let almoco = []
+        let lancheTarde = []
+        let janta = []
+
+        let listaRefeicoes = []
     
         refeicoes.forEach((item, index) => {
             if(refeicoes[index].categoria == "Café da manhã"){
@@ -66,23 +71,42 @@ router.get('/refeicao-info', async (req, res) => {
             if(refeicoes[index].categoria == "Lanche"){
                 lanche.push(item)
             }
-        })
-        SorteiaRefeicao(cafe_manha, lanche, categorias)
-    }
-    
-    function SorteiaRefeicao(cafe, lanche, categorias){
-        cafe_selecionado = cafe[Math.floor(Math.random() * cafe.length)]
-        lanche_selecionado = lanche[Math.floor(Math.random() * lanche.length)]
 
-        const resultado = {categorias, cafe_selecionado, lanche_selecionado}
+            if(refeicoes[index].categoria == "Almoço"){
+                almoco.push(item)
+            }
+
+            if(refeicoes[index].categoria == "Lanche da tarde"){
+                lancheTarde.push(item)
+            }
+
+            if(refeicoes[index].categoria == "Janta"){
+                janta.push(item)
+            }
+        })
+        listaRefeicoes.push(cafe_manha)
+        listaRefeicoes.push(lanche)
+        listaRefeicoes.push(almoco)
+        listaRefeicoes.push(lancheTarde)
+        listaRefeicoes.push(janta)
     
+        SorteiaRefeicao(listaRefeicoes, categorias)
+    }
+
+    function SorteiaRefeicao(listaRefeicoes, categorias){
+        let refeicoes_selecionadas = []
+        for(let i = 0; i < listaRefeicoes.length; i++){
+            refeicoes_selecionadas.push(listaRefeicoes[i][Math.floor(Math.random() * listaRefeicoes[i].length)])
+        }
+        const resultado = {categorias, refeicoes_selecionadas}
         res.send(resultado)
     }
 })
 
-router.post('/ingredientes', (req, res) =>{
+router.post('/ingredientes', (req, res) => {
 
-    console.log(req.body)
+    let refeicoes_selecionadas = Object.values(req.body)
+
     connection.getConnection(function(err, poolConnection){
 
         if(err) console.log('Connection error: ', err)
@@ -96,80 +120,34 @@ router.post('/ingredientes', (req, res) =>{
             FROM refeicoes 
                 
             INNER JOIN refeicao_ingredientes ON refeicoes.id = refeicao_ingredientes.id_refeicao
-            INNER JOIN ingredientes ON ingredientes.id = refeicao_ingredientes.id_ingrediente 
-                
-            WHERE refeicoes.id = 1`, async (error, result) => {
+            INNER JOIN ingredientes ON ingredientes.id = refeicao_ingredientes.id_ingrediente;`, async (error, result) => {
                 if(error) throw error
                 else {
-                    res.send(req.body)
+
+                    let arrayRefeicoes = []
+
+                    for(i = 0; i < Object.keys(refeicoes_selecionadas).length; i++){
+
+                        let objetoRefeicao = {}
+                        const refeicao = result.filter(function(arrayItem){
+                            return arrayItem.id_refeicao == refeicoes_selecionadas[i]
+                        })
+
+                        objetoRefeicao["id"] = refeicoes_selecionadas[i]
+                        objetoRefeicao["nome_refeicao"] = refeicao[0].nome_refeicao
+                        objetoRefeicao["ingredientes"] = result.filter(function (id_refeicao){
+                            return id_refeicao.id_refeicao == Object.values(req.body)[i]
+                        }).map(function(id_refeicao){
+                            return id_refeicao.nome_ingrediente
+                        })
+
+                        arrayRefeicoes.push(objetoRefeicao)
+                    }
+                    res.send(arrayRefeicoes)                    
                 }
             })
         }
     })
 })
-
-
-
-    /*let categoria_refeicao;
-    var data;
-
-    connection.getConnection(function(err, poolConnection) {
-        if(err) console.log('Connection error: ', err)
-        else {
-            poolConnection.query(`SELECT categoria FROM refeicoes GROUP BY categoria;`, async (error, result) => {
-
-                data = result
-                categoria_refeicao = result;
-
-                for(let i = 0; i < categoria_refeicao.length; i++){
-
-                    function SelecionaIngredientes(){
-
-                        let arrayRefeicoes = [];
-                        
-                        poolConnection.query(`SELECT * FROM refeicoes WHERE categoria = '${categoria_refeicao[i].categoria}';`, async(error, result) => {
-                            if(error) throw error
-                            else {
-        
-                                const numero_refeicoes = Object.keys(result).length
-                                let refeicao_aleatoria = Math.floor(Math.random() * numero_refeicoes)
-                                if(refeicao_aleatoria == 0) refeicao_aleatoria = 1
-    
-                                poolConnection.query(`SELECT 
-    
-                                            refeicoes.id AS 'id_refeicao',
-                                            refeicoes.nome AS 'nome_refeicao', 
-                                            ingredientes.nome AS 'nome_ingrediente'
-                                                    
-                                            FROM refeicoes 
-                                                
-                                            INNER JOIN refeicao_ingredientes ON refeicoes.id = refeicao_ingredientes.id_refeicao
-                                            INNER JOIN ingredientes ON ingredientes.id = refeicao_ingredientes.id_ingrediente 
-                                                
-                                            WHERE refeicoes.id = ${refeicao_aleatoria}`, async (error, result) => {
-    
-                                if(error) throw error
-                                    else {
-                                            data = {...data, result}
-                                            //console.log(data)
-                                            const refeicao_info = {categoria_refeicao, result}
-                                            arrayRefeicoes.push(result)
-                                            //res.send(refeicao_info)
-                                            return "alou"
-                                        }
-                                    }
-                                )
-                                
-                                
-                            }
-                            
-                        })
-                    }
-                    
-                }
-                
-            })
-        }
-    })*/
 
 module.exports = router

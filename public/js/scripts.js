@@ -47,14 +47,14 @@ fetch('../../data/user-info', { method: 'GET'})
                 <h2 id="refeicao_inicial">${parseInt(refeicao_inicial.split(":")[0]) + (i * 3) + ":00"}</h2>
                 <h3 id="refeicao-${i}">Refeição</h3>
                     <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        <h2 class="accordion-header" id="heading${i}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${i}" aria-expanded="false" aria-controls="collapse${i}">
                             Ingredientes
                         </button>
                         </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div id="collapse${i}" class="accordion-collapse collapse" aria-labelledby="heading${i}" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                        <ul class="list-group ingredientes" id="lista_ingredientes"></ul>
+                        <ul class="list-group ingredientes" id="lista_ingredientes${i}"></ul>
                             </div>
                         </div>
                     </div>                        
@@ -62,36 +62,47 @@ fetch('../../data/user-info', { method: 'GET'})
             </div>
             `
             
-            //const numero_ingredientes = refeicaoData.length
-            //const lista_ingredientes = document.querySelector("#lista_ingredientes")
-
-            /*for(let v = 0; v < numero_ingredientes; v++){
-                let ingrediente_item = document.createElement("li")
-                ingrediente_item.classList.add("list-group-item")
-                ingrediente_item.append(refeicaoData.result[v].nome_ingrediente)
-                document.querySelector("#lista_ingredientes").append(ingrediente_item)
-            }
-
-            const nome_refeicaoh3 = document.querySelector(`#refeicao-${i}`)
-            nome_refeicaoh3.innerHTML = `${refeicaoData[0].nome_refeicao}`
-
-            const card_refeicao = document.querySelector(`#card-${i}`);
-            card_refeicao.style.backgroundImage = `url('/img/cafe-manha/${refeicaoData.result[0].id_refeicao}.jpg')`
-        }*/
         }
+
+        let POST_refeicoes_selecionadas = {}
+        for(let i = 0; i < refeicaoData.refeicoes_selecionadas.length; i++){
+            POST_refeicoes_selecionadas[`refeicao${i}`] = refeicaoData.refeicoes_selecionadas[i].id
+        }
+
         fetch('../../data/ingredientes', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                Café_Selecionado: `${refeicaoData.cafe_selecionado.id}`,
-                Lanche_Selecionado: `${refeicaoData.lanche_selecionado.id}`
-            })
+            body: JSON.stringify(POST_refeicoes_selecionadas)
         })
         .then(response => response.json())
         .then((result) => {
+            
             console.log(result)
+
+            for(let i = 0; i < result.length; i++){
+                const nome_refeicao_h3 = document.querySelector(`#refeicao-${i}`)
+                nome_refeicao_h3.innerHTML = result[i].nome_refeicao
+                const numero_ingredientes = result[i].ingredientes.length
+                const lista_ingredientes = document.querySelector(`#lista_ingredientes${i}`)
+
+                for(let v = 0; v < numero_ingredientes; v++){
+                    let ingrediente_item = document.createElement("li")
+                    ingrediente_item.classList.add("list-group-item")
+                    ingrediente_item.append(result[i].ingredientes[v])
+                    document.querySelector(`#lista_ingredientes${i}`).append(ingrediente_item)
+                }
+
+            const card_refeicao = document.querySelector(`#card-${i}`);
+            card_refeicao.style.backgroundImage = `url('/img/${result[i].id}.jpg')`
+
+            }
+
+            /*
+            
+            }*/
+
         })
 })
    
