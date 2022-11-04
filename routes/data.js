@@ -2,28 +2,50 @@ const express = require('express')
 const router = express.Router()
 const connection = require("../controllers/db")
 
-var array = []
-
 router.get('/user-info', (req, res) => {
 
-    if(req.headers.cookie){
-        const cookie = req.headers.cookie.split('=')[0]
-        const userCookie = req.headers.cookie.split('=')[1]
-        
-        if(cookie == "userID"){
+    let cookies = req.headers.cookie
+    cookies = cookies.split('; ')
+    let userSessionPW = ''
+    let userID = ''
+    
+    if(cookies[0].split('=')[0] == "userps"){
+        userSessionPW = cookies[0].split('=')[1]
+        userID = cookies[1].split('=')[1]
+    } else {
+        userSessionPW = cookies[1].split('=')[1]
+        userID = cookies[0].split('=')[1]
+    }
 
-            connection.getConnection(function(err, poolConnection) {
-                if(err) console.log('Connection error: ', err)
-                else {
-                    poolConnection.query(`SELECT nome, altura, peso, nascimento, meta, sexo, refeicao_inicial FROM usuarios WHERE id = '${userCookie}'`, async (error, result) => {
-                        if(error) throw error
-                        else {
-                            res.send(result[0])
+    userSessionPW = decodeURIComponent(userSessionPW)
+    if(req.headers.cookie.includes('userID')){
+
+        connection.getConnection(function(err, poolConnection) {
+            if(err) console.log('Connection error: ', err)
+            else {
+                poolConnection.query(`SELECT id, sessionpw FROM usuarios WHERE id = '${userID}'`, async (error, result) => {
+                    if(error) throw error
+                    else {
+                        if(result[0].id == userID && result[0].sessionpw == userSessionPW){
+                            connection.getConnection(function(err, poolConnection) {
+                                if(err) console.log('Connection error: ', err)
+                                else {
+                                    poolConnection.query(`SELECT nome, altura, peso, nascimento, meta, sexo, refeicao_inicial FROM usuarios WHERE id = '${userID}'`, async (error, result) => {
+                                        if(error) throw error
+                                        else {
+                                            res.send(result[0])
+                                        }
+                                    })
+                                }
+                            })
                         }
-                    })
-                }
-            })
-        }
+                        else {
+                            res.send("Credenciais inválidas")
+                        }
+                    }
+                })
+            }
+        })
     }
 })
 
@@ -60,6 +82,7 @@ router.get('/refeicao-info', async (req, res) => {
         let almoco = []
         let lancheTarde = []
         let janta = []
+        let ceia = []
 
         let listaRefeicoes = []
     
@@ -83,12 +106,19 @@ router.get('/refeicao-info', async (req, res) => {
             if(refeicoes[index].categoria == "Janta"){
                 janta.push(item)
             }
+
+            if(refeicoes[index].categoria == "Ceia"){
+                ceia.push(item)
+            }
+
         })
+
         listaRefeicoes.push(cafe_manha)
         listaRefeicoes.push(lanche)
         listaRefeicoes.push(almoco)
         listaRefeicoes.push(lancheTarde)
         listaRefeicoes.push(janta)
+        listaRefeicoes.push(ceia)
     
         SorteiaRefeicao(listaRefeicoes, categorias)
     }
@@ -148,6 +178,59 @@ router.post('/ingredientes', (req, res) => {
             })
         }
     })
+})
+
+router.post('/atualiza-refeicao', (req, res) => {
+
+    let tipo_refeicao = Object.values(req.body)
+
+    connection.getConnection(function(err, poolConnection) {
+        if(err) console.log('Connection error: ', err)
+        else {
+            poolConnection.query(`SELECT categoria FROM refeicoes GROUP BY categoria;`, async (error, categorias) => {
+                connection.getConnection(function(err, poolConnection){
+
+                    if(err) console.log('Connection error: ', err)
+                    else {
+                        poolConnection.query(`SELECT 
+                
+                        refeicoes.id AS 'id_refeicao',
+                        refeicoes.nome AS 'nome_refeicao', 
+                        ingredientes.nome AS 'nome_ingrediente'
+                                
+                        FROM refeicoes 
+                            
+                        INNER JOIN refeicao_ingredientes ON refeicoes.id = refeicao_ingredientes.id_refeicao
+                        INNER JOIN ingredientes ON ingredientes.id = refeicao_ingredientes.id_ingrediente
+                        
+                        WHERE refeicoes.categoria = '${Object.values(categorias[tipo_refeicao])}'
+                        
+                        ORDER BY id_refeicao;`, async (error, result) => {
+                            if(error) throw error
+                            else {
+
+                                const id_refeicao_sorteada =  Math.floor(Math.random() * (result[result.length - 1].id_refeicao - result[0].id_refeicao) + result[0].id_refeicao)                     
+                                const refeicao_selecionada = result.filter(function(array){
+                                    return array.id_refeicao == id_refeicao_sorteada
+                                })
+
+                                let obj_refeicao = {}
+                                obj_refeicao['id'] = refeicao_selecionada[0].id_refeicao
+                                obj_refeicao['nome_refeicao'] = refeicao_selecionada[0].nome_refeicao
+                                obj_refeicao['ingredientes'] = result.filter(function(item){
+                                    return item.id_refeicao == refeicao_selecionada[0].id_refeicao
+                                }).map(function(item){
+                                    return item.nome_ingrediente
+                                })
+                                res.send(obj_refeicao)        
+                            }
+                        })
+                    }
+                })  
+            })
+        }
+    })
+    
 })
 
 module.exports = router

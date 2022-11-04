@@ -35,7 +35,7 @@ fetch('../../data/user-info', { method: 'GET'})
             containerRefeicoes.innerHTML += `
             <div class="refeicao row col-fluid">
                 <div id="card-${i}" class="imagem-comida col-3">
-                    <button class="botaoAtualizaRefeicao" onclick="AtualizaRefeicao()">
+                    <button class="botaoAtualizaRefeicao" onclick="AtualizaRefeicao(${i})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 20">
                             <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
                             <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
@@ -121,29 +121,35 @@ function CalculaMeta(peso, altura, idade, sexo){
     }
 }
 
-function AtualizaRefeicao(){
-    fetch('../../data/refeicao-info', { method: 'GET'})
+function AtualizaRefeicao(refeicao){
+    fetch('../../data/atualiza-refeicao', { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({"Refeição": refeicao})
+    })
     .then(response => response.json())
     .then((refeicaoData) => {
 
-        console.log(refeicaoData)
-        document.querySelector("#lista_ingredientes").innerHTML = "";
+        document.querySelector(`#lista_ingredientes${refeicao}`).innerHTML = "";
 
-        const numero_ingredientes = Object.keys(refeicaoData).length
+        const numero_ingredientes = Object.keys(refeicaoData.ingredientes).length
+        console.log(numero_ingredientes, refeicao, refeicaoData)
 
         for(let i = 0; i < numero_ingredientes; i++){
 
             let ingrediente_item = document.createElement("li")
             ingrediente_item.classList.add("list-group-item")
-            ingrediente_item.append(refeicaoData[i].nome_ingrediente)
-            document.querySelector("#lista_ingredientes").append(ingrediente_item)
+            ingrediente_item.append(refeicaoData.ingredientes[i])
+            document.querySelector(`#lista_ingredientes${refeicao}`).append(ingrediente_item)
         }
 
-        const nome_refeicaoh3 = document.querySelector("#refeicao_nome")
-        nome_refeicaoh3.innerHTML = `${refeicaoData[0].nome_refeicao}`
+        const nome_refeicaoh3 = document.querySelector(`#refeicao-${refeicao}`)
+        nome_refeicaoh3.innerHTML = `${refeicaoData.nome_refeicao}`
 
-        const card_refeicao = document.querySelector("#card-cafe-manha");
-        card_refeicao.style.backgroundImage = `url('/img/cafe-manha/${refeicaoData[0].id_refeicao}.jpg')`
+        const card_refeicao = document.querySelector(`#card-${refeicao}`);
+        card_refeicao.style.backgroundImage = `url('/img/${refeicaoData.id}.jpg')`
     })
 }
 

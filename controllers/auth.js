@@ -41,36 +41,54 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
 
     const { id, email, senha } = req.body
-    connection.getConnection(function(err, poolConnection) {
+    connection.getConnection(async function(err, poolConnection) {
         if(err) console.log('Connection error: ', err)
         else{
-            poolConnection.query(`SELECT id, email, senha FROM usuarios WHERE email = '${email}'`, async (error, result) => {
+            let sessionpw = await bcrypt.hash(Math.random().toString(36).slice(-8), 8)
+            poolConnection.query(`UPDATE usuarios SET sessionpw = '${sessionpw}' WHERE email = '${email}'`, async (error, result) => {
                 if(error) throw error
-                
-                if(result.length == 0) {
-                    return res.render('login', {
-                        message: "Email não encontrado"
+                else {
+                    poolConnection.query(`SELECT id, email, senha, sessionpw FROM usuarios WHERE email = '${email}'`, async (error, result) => {
+                        if(error) throw error
+                        
+                        if(result.length == 0) {
+                            return res.render('login', {
+                                message: "Email não encontrado"
+                            })
+                        } else {
+                            console.log(result[0])
+                            const compare = await bcrypt.compare(senha, result[0].senha);
+                            if(compare){
+                                res.cookie('userID', result[0].id, {path: '/'}, {maxAge: 10800})
+                                res.cookie('userps', sessionpw, {path: '/'}, {maxAge: 10800})
+                                return res.redirect('../');
+                            } else {
+                                return res.render('login', {
+                                    message: "Senha incorreta"
+                                })
+                            }
+                        }
                     })
-                } else {
-        
-                    const compare = await bcrypt.compare(senha, result[0].senha);
-                    if(compare){
-                        res.cookie('userID', result[0].id, {path: '/'}, {maxAge: 10800})
-                        return res.redirect('../');
-                    } else {
-                        return res.render('login', {
-                            message: "Senha incorreta"
-                        })
-                    }
                 }
-            })
+            })   
             poolConnection.release()
         }
     })
 }
 
 exports.configuration = (req, res) => {
-    const userCookie = req.headers.cookie.split('=')[1]
+
+    let cookies = req.headers.cookie
+    cookies = cookies.split('; ')
+    
+    if(cookies[0].split('=')[0] == "userps"){
+        userSessionPW = cookies[0].split('=')[1]
+        userCookie = cookies[1].split('=')[1]
+    } else {
+        userSessionPW = cookies[1].split('=')[1]
+        userCookie = cookies[0].split('=')[1]
+    }
+
     const { nome, altura, peso, meta, sexo } = req.body
 
     connection.getConnection(function(err, poolConnection) {

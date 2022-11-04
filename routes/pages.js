@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs")
 const express = require('express')
 const router = express.Router()
 const connection = require("../controllers/db")
@@ -5,10 +6,10 @@ const connection = require("../controllers/db")
 router.get('/', (req, res) => {
 
     if(req.headers.cookie){
-        const cookie = req.headers.cookie.split('=')[0]
-        const userCookie = req.headers.cookie.split('=')[1]
-        
-        if(cookie == "userID"){
+        const sessionpw = req.headers.cookie.split('=')[1].split(';')[0]
+        const userID = req.headers.cookie.split('=')[2]
+
+        if(req.headers.cookie.includes('userID')){
             res.render('index')
         } else {
             res.render('login')
@@ -58,6 +59,7 @@ router.get('/login', (req, res) => {
 
 router.get('/logout', (req, res) => {
     res.clearCookie('userID')
+    res.clearCookie('userps')
     res.render('login')
 })
 

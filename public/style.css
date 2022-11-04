@@ -1,3 +1,35 @@
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background-color:#efefef;
+}
+
+::-webkit-scrollbar-thumb{
+    background-color: #f01f10;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background-color: #db1d0f;
+}
+
+.botao{
+    background-color: #db1d0f;
+    color:#ffffff;
+    margin-right:10px;
+    font-weight: bold;
+    border: 1px solid #82b900;
+}
+
+.link{
+    color:#82b900;
+}
+
+.link:hover{
+    color:#72a300;
+}
+
 h5{
     font-weight: normal;
 }
@@ -20,6 +52,10 @@ ul li a{
 
 ul li a:hover{
     color:cadetblue;
+}
+
+.button-holder{
+    padding-top:10px;
 }
 
 .img-round{
@@ -112,4 +148,21 @@ ul li a:hover{
     width:22px;
     height:22px;
     color:rgb(13, 113, 243);
+}
+
+.info{
+    color:darkgrey;
+}
+
+.img-holder{
+    text-align: center;
+}
+
+.logo-login{
+    max-width: 320px;
+}
+
+.texto-login{
+    padding: 40px 10% 0 10%;
+    color:rgb(51, 51, 51);
 }
