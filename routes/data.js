@@ -40,7 +40,7 @@ router.get('/user-info', (req, res) => {
                             })
                         }
                         else {
-                            res.send("Credenciais inválidas")
+                            res.send({Credenciais: "Inválidas"})
                         }
                     }
                 })

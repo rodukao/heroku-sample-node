@@ -56,7 +56,6 @@ exports.login = (req, res) => {
                                 message: "Email não encontrado"
                             })
                         } else {
-                            console.log(result[0])
                             const compare = await bcrypt.compare(senha, result[0].senha);
                             if(compare){
                                 res.cookie('userID', result[0].id, {path: '/'}, {maxAge: 10800})
@@ -80,13 +79,15 @@ exports.configuration = (req, res) => {
 
     let cookies = req.headers.cookie
     cookies = cookies.split('; ')
+    let userSessionPW = ''
+    let userID = ''
     
     if(cookies[0].split('=')[0] == "userps"){
         userSessionPW = cookies[0].split('=')[1]
-        userCookie = cookies[1].split('=')[1]
+        userID = cookies[1].split('=')[1]
     } else {
         userSessionPW = cookies[1].split('=')[1]
-        userCookie = cookies[0].split('=')[1]
+        userID = cookies[0].split('=')[1]
     }
 
     const { nome, altura, peso, meta, sexo } = req.body
@@ -94,12 +95,10 @@ exports.configuration = (req, res) => {
     connection.getConnection(function(err, poolConnection) {
         if(err) console.log('Connection error: ', err)
         else{
-
-            poolConnection.query(`UPDATE usuarios SET nome = '${nome}', altura = '${altura}', peso = '${peso}', meta = '${meta}', sexo = '${sexo}' WHERE id = ${userCookie}`, async (error, result) => {
+            poolConnection.query(`UPDATE usuarios SET nome = '${nome}', altura = '${altura}', peso = '${peso}', meta = '${meta}', sexo = '${sexo}' WHERE id = ${userID}`, async (error, result) => {
                 if(error){
                     throw error
                 } else {
-                    console.log(meta)
                     return res.redirect('../')
                 }
             })

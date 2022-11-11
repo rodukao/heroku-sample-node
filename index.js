@@ -1,20 +1,22 @@
 const path = require('path');
+const publicDirectory = path.join(__dirname, './public')
+
+//DOTENV
+require('dotenv').config()
 
 //EXPRESS
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
-//DOTENV
-require('dotenv').config()
+//HandleBars
+app.set('view engine', 'hbs')
 
-const publicDirectory = path.join(__dirname, './public')
 app.use(express.static(publicDirectory))
-
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 
-app.set('view engine', 'hbs')
+//Definindo rotas
 app.use('/', require('./routes/pages'))
 app.use('/auth', require('./routes/auth'))
 app.use('/data', require('./routes/data'))

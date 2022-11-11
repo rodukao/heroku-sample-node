@@ -12,6 +12,15 @@ fetch('../../data/user-info', { method: 'GET'})
     .then(response => response.json())
     .then((userData) => {
 
+        console.log(userData)
+
+        if(userData.Credenciais == "Inválidas"){
+            alert("Credenciais inválidas. Por favor, refaça o login.")
+            document.cookie = "userID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "userps=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            window.location.href = "/login";
+        }
+
         const idade = CalculaIdade(new Date(userData.nascimento))
         const meta = CalculaMeta(userData.peso, userData.altura, idade, userData.sexo)
 
@@ -27,6 +36,8 @@ fetch('../../data/user-info', { method: 'GET'})
     .then(fetch('../../data/refeicao-info', { method: 'GET'})
     .then(response => response.json())
     .then((refeicaoData) => {
+
+        console.log(refeicaoData)
         
         let categoriasRefeicoes = refeicaoData.categorias;
         const containerRefeicoes = document.querySelector("#container-refeicoes")
@@ -98,10 +109,6 @@ fetch('../../data/user-info', { method: 'GET'})
             card_refeicao.style.backgroundImage = `url('/img/${result[i].id}.jpg')`
 
             }
-
-            /*
-            
-            }*/
 
         })
 })
