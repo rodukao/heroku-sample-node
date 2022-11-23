@@ -1,3 +1,4 @@
+//DADOS USUÁRIO
 const usernameSpan = document.querySelector("#user-name");
 const idadeSpan = document.querySelector("#idade");
 const alturaSpan = document.querySelector("#altura");
@@ -5,44 +6,42 @@ const pesoSpan = document.querySelector("#peso");
 const metaSpan = document.querySelector('#meta')
 const objetivoSpan = document.querySelector("#objetivo")
 const refeicao_inicialh2 = document.querySelector("#refeicao_inicial")
-
 var refeicao_inicial;
 
-fetch('../../data/user-info', { method: 'GET'})
-    .then(response => response.json())
-    .then((userData) => {
+fetch('../../data/user-info', {method: 'GET'})
+.then(response => response.json()).then((userData) => {
+    
+    if(userData.Credenciais == "Inválidas"){
+        alert("Credenciais inválidas. Por favor, refaça o login.")
+        document.cookie = "userID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "userps=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = "/login";
+    }
 
-        console.log(userData)
+    const idade = CalculaIdade(new Date(userData.nascimento))
+    const meta = CalculaMeta(userData.peso, userData.altura, idade, userData.sexo)
 
-        if(userData.Credenciais == "Inválidas"){
-            alert("Credenciais inválidas. Por favor, refaça o login.")
-            document.cookie = "userID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            document.cookie = "userps=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            window.location.href = "/login";
-        }
+    document.title = `DIETAS JÁ - ${userData.nome}`;
+    usernameSpan.innerHTML = userData.nome;
+    idadeSpan.innerHTML = `${idade} anos`;
+    alturaSpan.innerHTML = `${userData.altura} cm`;
+    pesoSpan.innerHTML = `${userData.peso} kg`;
+    metaSpan.innerHTML = `${meta.toFixed(2)} kcal`;
+    objetivoSpan.innerHTML = `(${userData.meta} massa)`;
+    refeicao_inicial = `${userData.refeicao_inicial.split(":", 2).join(":")}`;
+})
 
-        const idade = CalculaIdade(new Date(userData.nascimento))
-        const meta = CalculaMeta(userData.peso, userData.altura, idade, userData.sexo)
-
-        document.title = `DIETAS JÁ - ${userData.nome}`;
-        usernameSpan.innerHTML = userData.nome;
-        idadeSpan.innerHTML = `${idade} anos`;
-        alturaSpan.innerHTML = `${userData.altura} cm`;
-        pesoSpan.innerHTML = `${userData.peso} kg`;
-        metaSpan.innerHTML = `${meta.toFixed(2)} kcal`;
-        objetivoSpan.innerHTML = `(${userData.meta} massa)`;
-        refeicao_inicial = `${userData.refeicao_inicial.split(":", 2).join(":")}`;
-    })
-    .then(fetch('../../data/refeicao-info', { method: 'GET'})
+//DADOS REFEIÇÕES
+fetch('../../data/refeicao-info', { method: 'GET'})
     .then(response => response.json())
     .then((refeicaoData) => {
 
-        console.log(refeicaoData)
+        console.log(refeicaoData.refeicoesSorteadas);
+        const refeicoesSorteadas = refeicaoData.refeicoesSorteadas;
         
-        let categoriasRefeicoes = refeicaoData.categorias;
         const containerRefeicoes = document.querySelector("#container-refeicoes")
 
-        for(let i = 0; i < categoriasRefeicoes.length; i++){
+        for(let i = 0; i < refeicoesSorteadas.length; i++){
             containerRefeicoes.innerHTML += `
             <div class="refeicao row col-fluid">
                 <div id="card-${i}" class="imagem-comida col-3">
@@ -71,50 +70,59 @@ fetch('../../data/user-info', { method: 'GET'})
                     </div>                        
                 </div>    
             </div>
-            `
-            
+            `   
         }
 
-        let POST_refeicoes_selecionadas = {}
-        for(let i = 0; i < refeicaoData.refeicoes_selecionadas.length; i++){
-            POST_refeicoes_selecionadas[`refeicao${i}`] = refeicaoData.refeicoes_selecionadas[i].id
-        }
-
-        fetch('../../data/ingredientes', { 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(POST_refeicoes_selecionadas)
-        })
-        .then(response => response.json())
-        .then((result) => {
-            
-            console.log(result)
-
-            for(let i = 0; i < result.length; i++){
-                const nome_refeicao_h3 = document.querySelector(`#refeicao-${i}`)
-                nome_refeicao_h3.innerHTML = result[i].nome_refeicao
-                const numero_ingredientes = result[i].ingredientes.length
-                const lista_ingredientes = document.querySelector(`#lista_ingredientes${i}`)
-
-                for(let v = 0; v < numero_ingredientes; v++){
-                    let ingrediente_item = document.createElement("li")
-                    ingrediente_item.classList.add("list-group-item")
-                    ingrediente_item.append(result[i].ingredientes[v])
-                    document.querySelector(`#lista_ingredientes${i}`).append(ingrediente_item)
-                }
-
-            const card_refeicao = document.querySelector(`#card-${i}`);
-            card_refeicao.style.backgroundImage = `url('/img/${result[i].id}.jpg')`
-
+        for(let i = 0; i < refeicoesSorteadas.length; i++){
+            const nome_refeicao_h3 = document.querySelector(`#refeicao-${i}`)
+            nome_refeicao_h3.innerHTML = refeicoesSorteadas[i].nome_refeicao
+            const numero_ingredientes = refeicoesSorteadas[i].ingredientes.length
+            const lista_ingredientes = document.querySelector(`#lista_ingredientes${i}`)
+    
+            for(let v = 0; v < numero_ingredientes; v++){
+                let ingrediente_item = document.createElement("li")
+                ingrediente_item.classList.add("list-group-item")
+                ingrediente_item.append(result[i].ingredientes[v])
+                document.querySelector(`#lista_ingredientes${i}`).append(ingrediente_item)
             }
-
-        })
+    
+        const card_refeicao = document.querySelector(`#card-${i}`);
+        card_refeicao.style.backgroundImage = `url('/img/${result[i].id}.jpg')`
+    
+        }
 })
-   
-)
-    .catch(err => console.log(err.message));
+
+/*fetch('../../data/ingredientes', { 
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(POST_refeicoes_selecionadas)
+})
+.then(response => response.json())
+.then((result) => {
+    
+    console.log(result)
+
+    for(let i = 0; i < result.length; i++){
+        const nome_refeicao_h3 = document.querySelector(`#refeicao-${i}`)
+        nome_refeicao_h3.innerHTML = result[i].nome_refeicao
+        const numero_ingredientes = result[i].ingredientes.length
+        const lista_ingredientes = document.querySelector(`#lista_ingredientes${i}`)
+
+        for(let v = 0; v < numero_ingredientes; v++){
+            let ingrediente_item = document.createElement("li")
+            ingrediente_item.classList.add("list-group-item")
+            ingrediente_item.append(result[i].ingredientes[v])
+            document.querySelector(`#lista_ingredientes${i}`).append(ingrediente_item)
+        }
+
+    const card_refeicao = document.querySelector(`#card-${i}`);
+    card_refeicao.style.backgroundImage = `url('/img/${result[i].id}.jpg')`
+
+    }
+
+})*/
 
 function CalculaIdade(nascimento){
     return Math.abs(new Date(Date.now() - nascimento.getTime()).getUTCFullYear() - 1970);

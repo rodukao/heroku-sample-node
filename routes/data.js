@@ -1,45 +1,24 @@
 const express = require('express')
 const router = express.Router()
 const connection = require("../controllers/db")
+const functions = require("../controllers/functions")
 
 router.get('/user-info', (req, res) => {
-
-    let cookies = req.headers.cookie
-    cookies = cookies.split('; ')
-    let userSessionPW = ''
-    let userID = ''
-    
-    if(cookies[0].split('=')[0] == "userps"){
-        userSessionPW = cookies[0].split('=')[1]
-        userID = cookies[1].split('=')[1]
-    } else {
-        userSessionPW = cookies[1].split('=')[1]
-        userID = cookies[0].split('=')[1]
-    }
-
-    userSessionPW = decodeURIComponent(userSessionPW)
-    if(req.headers.cookie.includes('userID')){
-
-        connection.getConnection(function(err, poolConnection) {
-            if(err) console.log('Connection error: ', err)
+    const cookies = functions.RetornaCookies(req);
+    if(cookies){
+        connection.getConnection(function(err, poolConnection){
+            if(err) console.log(err);
             else {
-                poolConnection.query(`SELECT id, sessionpw FROM usuarios WHERE id = '${userID}'`, async (error, result) => {
-                    if(error) throw error
+                poolConnection.query(`SELECT id, sessionpw, nome, altura, peso, nascimento, meta, sexo, refeicao_inicial FROM usuarios WHERE id = '${cookies.UserID}';`, (error, result) => {
+                    if(error) throw error;
                     else {
-                        if(result[0].id == userID && result[0].sessionpw == userSessionPW){
-                            connection.getConnection(function(err, poolConnection) {
-                                if(err) console.log('Connection error: ', err)
-                                else {
-                                    poolConnection.query(`SELECT nome, altura, peso, nascimento, meta, sexo, refeicao_inicial FROM usuarios WHERE id = '${userID}'`, async (error, result) => {
-                                        if(error) throw error
-                                        else {
-                                            res.send(result[0])
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                        else {
+                        if(result.length > 0){
+                            if(result[0].sessionpw == cookies.UserPW){
+                                res.send(result[0])
+                            } else {
+                                res.send({Credenciais: "Inválidas"})
+                            }
+                        } else {
                             res.send({Credenciais: "Inválidas"})
                         }
                     }
@@ -51,86 +30,35 @@ router.get('/user-info', (req, res) => {
 
 router.get('/refeicao-info', async (req, res) => {
 
-    SelecionaCategorias()
-    function SelecionaCategorias(){
-    
-        connection.getConnection(function(err, poolConnection) {
-            if(err) console.log('Connection error: ', err)
-            else {
-                poolConnection.query(`SELECT categoria FROM refeicoes GROUP BY categoria;`, async (error, categorias) => {
-                    SelecionaRefeicoes(categorias)
-                })
-            }
-        })
-    }
-    
-    async function SelecionaRefeicoes(categorias){
-        connection.getConnection(function(err, poolConnection) {
-            if(err) console.log('Connection error: ', err)
-            else {
-                poolConnection.query(`SELECT * FROM refeicoes;`, async (error, refeicoes) => {
-                    SeparaRefeicoesPorCategorias(categorias, refeicoes)
-                })
-            }
-        })
-    }
-    
-    function SeparaRefeicoesPorCategorias(categorias, refeicoes){
-    
-        let cafe_manha = []
-        let lanche = []
-        let almoco = []
-        let lancheTarde = []
-        let janta = []
-        let ceia = []
+    connection.getConnection(function(err, poolConnection){
 
-        let listaRefeicoes = []
-    
-        refeicoes.forEach((item, index) => {
-            if(refeicoes[index].categoria == "Café da manhã"){
-                cafe_manha.push(item)
-            }
-    
-            if(refeicoes[index].categoria == "Lanche"){
-                lanche.push(item)
-            }
+        if(err) console.log('Connection error: ', err)
+        else {
+            poolConnection.query(`SELECT 
+            
+            refeicoes.categoria AS 'categoria',
+            refeicoes.id AS 'id_refeicao',
+            refeicoes.nome AS 'nome_refeicao', 
+            ingredientes.nome AS 'nome_ingrediente'
+                    
+            FROM refeicoes 
+                
+            INNER JOIN refeicao_ingredientes ON refeicoes.id = refeicao_ingredientes.id_refeicao
+            INNER JOIN ingredientes ON ingredientes.id = refeicao_ingredientes.id_ingrediente;`, async (error, result) => {
+                if(error) throw error
+                else {
 
-            if(refeicoes[index].categoria == "Almoço"){
-                almoco.push(item)
-            }
+                    const categorias = functions.CategoriasRefeicoes(result);
+                    const refeicoes = functions.SeparaRefeicoes(result);
+                    const refeicoesSorteadas = functions.SorteiaRefeicoes(refeicoes);
+                    const ingredientes = functions.RetornaIngredientes(refeicoesSorteadas, result);
+                    //console.log(ingredientes);
+                    res.send({ingredientes});
 
-            if(refeicoes[index].categoria == "Lanche da tarde"){
-                lancheTarde.push(item)
-            }
-
-            if(refeicoes[index].categoria == "Janta"){
-                janta.push(item)
-            }
-
-            if(refeicoes[index].categoria == "Ceia"){
-                ceia.push(item)
-            }
-
-        })
-
-        listaRefeicoes.push(cafe_manha)
-        listaRefeicoes.push(lanche)
-        listaRefeicoes.push(almoco)
-        listaRefeicoes.push(lancheTarde)
-        listaRefeicoes.push(janta)
-        listaRefeicoes.push(ceia)
-    
-        SorteiaRefeicao(listaRefeicoes, categorias)
-    }
-
-    function SorteiaRefeicao(listaRefeicoes, categorias){
-        let refeicoes_selecionadas = []
-        for(let i = 0; i < listaRefeicoes.length; i++){
-            refeicoes_selecionadas.push(listaRefeicoes[i][Math.floor(Math.random() * listaRefeicoes[i].length)])
+                }
+            })
         }
-        const resultado = {categorias, refeicoes_selecionadas}
-        res.send(resultado)
-    }
+    })
 })
 
 router.post('/ingredientes', (req, res) => {

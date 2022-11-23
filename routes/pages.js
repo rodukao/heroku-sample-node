@@ -6,15 +6,7 @@ const functions = require('../controllers/functions')
 
 router.get('/', (req, res) => {
 
-    if(functions.ChecaCookies(req)){
-
-        res.render('index');
-
-    } else {
-
-        res.render('login');
-
-    }
+    functions.ChecaCookies(req) ? res.render('index') : res.render('login');
 
 })
 
