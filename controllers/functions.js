@@ -1,4 +1,4 @@
-const connection = require('./db')
+const connection = require('./db');
 
 module.exports = {
     RetornaCookies: function(req){
@@ -134,7 +134,7 @@ module.exports = {
             objetoRefeicao["id"] = refeicoes_selecionadas[i].id_refeicao;
             objetoRefeicao["nome_refeicao"] = refeicao[0].nome_refeicao;
             objetoRefeicao["ingredientes"] = result.filter(function (item){
-                    return item.id_refeicao == result[i].id_refeicao
+                    return item.id_refeicao == refeicoes_selecionadas[i].id_refeicao
                 }).map(function(id_refeicao){
                         return id_refeicao.nome_ingrediente
                     })
@@ -142,6 +142,6 @@ module.exports = {
             arrayRefeicoes.push(objetoRefeicao);   
 
         }
-        console.log(arrayRefeicoes)
+        return arrayRefeicoes;
     }
 }

@@ -48,60 +48,11 @@ router.get('/refeicao-info', async (req, res) => {
                 if(error) throw error
                 else {
 
-                    const categorias = functions.CategoriasRefeicoes(result);
                     const refeicoes = functions.SeparaRefeicoes(result);
                     const refeicoesSorteadas = functions.SorteiaRefeicoes(refeicoes);
                     const ingredientes = functions.RetornaIngredientes(refeicoesSorteadas, result);
-                    //console.log(ingredientes);
                     res.send({ingredientes});
 
-                }
-            })
-        }
-    })
-})
-
-router.post('/ingredientes', (req, res) => {
-
-    let refeicoes_selecionadas = Object.values(req.body)
-
-    connection.getConnection(function(err, poolConnection){
-
-        if(err) console.log('Connection error: ', err)
-        else {
-            poolConnection.query(`SELECT 
-    
-            refeicoes.id AS 'id_refeicao',
-            refeicoes.nome AS 'nome_refeicao', 
-            ingredientes.nome AS 'nome_ingrediente'
-                    
-            FROM refeicoes 
-                
-            INNER JOIN refeicao_ingredientes ON refeicoes.id = refeicao_ingredientes.id_refeicao
-            INNER JOIN ingredientes ON ingredientes.id = refeicao_ingredientes.id_ingrediente;`, async (error, result) => {
-                if(error) throw error
-                else {
-
-                    let arrayRefeicoes = []
-
-                    for(i = 0; i < Object.keys(refeicoes_selecionadas).length; i++){
-
-                        let objetoRefeicao = {}
-                        const refeicao = result.filter(function(arrayItem){
-                            return arrayItem.id_refeicao == refeicoes_selecionadas[i]
-                        })
-
-                        objetoRefeicao["id"] = refeicoes_selecionadas[i]
-                        objetoRefeicao["nome_refeicao"] = refeicao[0].nome_refeicao
-                        objetoRefeicao["ingredientes"] = result.filter(function (id_refeicao){
-                            return id_refeicao.id_refeicao == Object.values(req.body)[i]
-                        }).map(function(id_refeicao){
-                            return id_refeicao.nome_ingrediente
-                        })
-
-                        arrayRefeicoes.push(objetoRefeicao)
-                    }
-                    res.send(arrayRefeicoes)                    
                 }
             })
         }

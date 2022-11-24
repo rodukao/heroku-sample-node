@@ -36,8 +36,8 @@ fetch('../../data/refeicao-info', { method: 'GET'})
     .then(response => response.json())
     .then((refeicaoData) => {
 
-        console.log(refeicaoData.refeicoesSorteadas);
-        const refeicoesSorteadas = refeicaoData.refeicoesSorteadas;
+        const refeicoesSorteadas = refeicaoData.ingredientes;
+        console.log(refeicoesSorteadas)
         
         const containerRefeicoes = document.querySelector("#container-refeicoes")
 
@@ -82,47 +82,15 @@ fetch('../../data/refeicao-info', { method: 'GET'})
             for(let v = 0; v < numero_ingredientes; v++){
                 let ingrediente_item = document.createElement("li")
                 ingrediente_item.classList.add("list-group-item")
-                ingrediente_item.append(result[i].ingredientes[v])
+                ingrediente_item.append(refeicoesSorteadas[i].ingredientes[v])
                 document.querySelector(`#lista_ingredientes${i}`).append(ingrediente_item)
             }
     
         const card_refeicao = document.querySelector(`#card-${i}`);
-        card_refeicao.style.backgroundImage = `url('/img/${result[i].id}.jpg')`
+        card_refeicao.style.backgroundImage = `url('/img/${refeicoesSorteadas[i].id}.jpg')`
     
         }
 })
-
-/*fetch('../../data/ingredientes', { 
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(POST_refeicoes_selecionadas)
-})
-.then(response => response.json())
-.then((result) => {
-    
-    console.log(result)
-
-    for(let i = 0; i < result.length; i++){
-        const nome_refeicao_h3 = document.querySelector(`#refeicao-${i}`)
-        nome_refeicao_h3.innerHTML = result[i].nome_refeicao
-        const numero_ingredientes = result[i].ingredientes.length
-        const lista_ingredientes = document.querySelector(`#lista_ingredientes${i}`)
-
-        for(let v = 0; v < numero_ingredientes; v++){
-            let ingrediente_item = document.createElement("li")
-            ingrediente_item.classList.add("list-group-item")
-            ingrediente_item.append(result[i].ingredientes[v])
-            document.querySelector(`#lista_ingredientes${i}`).append(ingrediente_item)
-        }
-
-    const card_refeicao = document.querySelector(`#card-${i}`);
-    card_refeicao.style.backgroundImage = `url('/img/${result[i].id}.jpg')`
-
-    }
-
-})*/
 
 function CalculaIdade(nascimento){
     return Math.abs(new Date(Date.now() - nascimento.getTime()).getUTCFullYear() - 1970);
