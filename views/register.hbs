@@ -12,34 +12,34 @@
     {{#if message}}
         <h5 class="alert alert-danger mt-5">{{ message }}</h5>
     {{/if}}
-    <main class="container-sm mt-5">
+    <main class="container-xl px-5 mt-5">
         <h1 class="mb-5">Cadastre-se!</h1>
         <form action="/auth/register" method="POST" class="row g2 justify-content-md-center">
-            <div class="mb-3 col-6">
+            <div class="mb-3 col-xl-6 col-12">
                 <label for="nome" class="form-label">Nome</label>
                 <input type="text" class="form-control" id="nome" name="nome">
             </div>
-            <div class="mb-3 col-6">
+            <div class="mb-3 col-xl-6 col-12">
                 <label for="nascimento" class="form-label">Nascimento</label>
                 <input type="date" class="form-control" id="nascimento" name="nascimento">
             </div>
-            <div class="mb-3 col-6">
+            <div class="mb-3 col-xl-6 col-12">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email">
             </div>
-            <div class="mb-3 col-6">
+            <div class="mb-3 col-xl-6 col-12">
                 <label for="formFile" class="form-label">Foto de perfil</label>
                 <input class="form-control" type="file" id="formFile" name="formfile">
             </div>
-            <div class="mb-3 col-6">
+            <div class="mb-3 col-xl-6 col-12">
                 <label for="senha" class="form-label">Senha</label>
                 <input type="password" class="form-control" id="senha" name="senha">
             </div>
-            <div class="mb-3 col-6">
+            <div class="mb-3 col-xl-6 col-12">
                 <label for="confirm" class="form-label">Confirmação de senha</label>
                 <input type="password" class="form-control" id="confirm" name="confirm">
             </div>   
-            <button type="submit" class="btn botao mt-5 mb-2 col-5">Cadastrar</button>
+            <button type="submit" class="btn botao mt-5 mb-2 col-xl-6 col-12">Cadastrar</button>
             <div class="text-center">
                 <span>Já é cadastrado? <a class="link" href="/login">Entrar</a></span> 
             </div>

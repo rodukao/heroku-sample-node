@@ -36,15 +36,13 @@ fetch('../../data/refeicao-info', { method: 'GET'})
     .then(response => response.json())
     .then((refeicaoData) => {
 
-        const refeicoesSorteadas = refeicaoData.ingredientes;
-        console.log(refeicoesSorteadas)
-        
+        const refeicoesSorteadas = refeicaoData.ingredientes;        
         const containerRefeicoes = document.querySelector("#container-refeicoes")
 
         for(let i = 0; i < refeicoesSorteadas.length; i++){
             containerRefeicoes.innerHTML += `
-            <div class="refeicao row col-fluid">
-                <div id="card-${i}" class="imagem-comida col-3">
+            <div class="refeicao row">
+                <div id="card-${i}" class="imagem-comida col-sm-12 col-md-6">
                     <button class="botaoAtualizaRefeicao" onclick="AtualizaRefeicao(${i})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 20">
                             <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
@@ -53,8 +51,8 @@ fetch('../../data/refeicao-info', { method: 'GET'})
                 </button>
             </div>
 
-            <div class="info-refeicao col-4 accordion">
-                <h2 id="refeicao_inicial">${parseInt(refeicao_inicial.split(":")[0]) + (i * 3) + ":00"}</h2>
+            <div class="info-refeicao col-sm-12 col-md-6 accordion">
+                <h2 id="refeicao_inicial">${6 + (i * 3) + ":00"}</h2>
                 <h3 id="refeicao-${i}">Refeição</h3>
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="heading${i}">
@@ -92,18 +90,6 @@ fetch('../../data/refeicao-info', { method: 'GET'})
         }
 })
 
-function CalculaIdade(nascimento){
-    return Math.abs(new Date(Date.now() - nascimento.getTime()).getUTCFullYear() - 1970);
-}
-
-function CalculaMeta(peso, altura, idade, sexo){
-    if(sexo == "feminino"){
-        return (((9.56 * peso) + (1.85 * altura) - (4.68 * idade) + 665) * 1.55)
-    } else {
-        return (((13.75 * peso) + (5 * altura) - (6.76 * idade) + 66.5) * 1.55)
-    }
-}
-
 function AtualizaRefeicao(refeicao){
     fetch('../../data/atualiza-refeicao', { 
         method: 'POST',
@@ -136,6 +122,34 @@ function AtualizaRefeicao(refeicao){
     })
 }
 
-function GeraNumeroRefeicoes(){
-    
+function CalculaIdade(nascimento){
+    return Math.abs(new Date(Date.now() - nascimento.getTime()).getUTCFullYear() - 1970);
+}
+
+function CalculaMeta(peso, altura, idade, sexo){
+    if(sexo == "feminino"){
+        return (((9.56 * peso) + (1.85 * altura) - (4.68 * idade) + 665) * 1.55)
+    } else {
+        return (((13.75 * peso) + (5 * altura) - (6.76 * idade) + 66.5) * 1.55)
+    }
+}
+
+function ShowHideMenu(){
+
+    const userMenu = document.querySelector('.info-usuario');
+    console.log(userMenu.offsetWidth);
+    if(userMenu.classList.contains("menu-ativo")){
+        userMenu.classList.toggle("menu-ativo");
+        if(window.innerWidth <= 600){
+            console.log("É menor")
+            userMenu.style.right = `-${userMenu.offsetWidth}px`;
+        }
+        else {
+            userMenu.style.right = `-${userMenu.offsetWidth}px`;
+        }      
+    } else {
+        userMenu.classList.toggle("menu-ativo");
+        userMenu.style.right = "0";
+    }
+
 }

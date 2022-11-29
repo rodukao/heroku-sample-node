@@ -1,3 +1,12 @@
+html, body, p{
+    margin:0;
+    padding:0;
+}
+
+a{
+    text-decoration: none;
+}
+
 ::-webkit-scrollbar{
     width:10px;
 }
@@ -7,7 +16,7 @@
 }
 
 ::-webkit-scrollbar-thumb{
-    background-color: #f01f10;
+    background-color: #b6b6b6;
 }
 
 ::-webkit-scrollbar-thumb:hover{
@@ -63,7 +72,37 @@ ul li a:hover{
 }
 
 .avatar-image{
-    width:50%;
+    max-height: 40px;
+    width: auto;
+}
+
+.nav{
+    background-color:white;
+    position: fixed;
+    z-index: 2;
+    width: 100%;
+    padding:20px 0;
+    top: 0;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.01);
+}
+
+.nav-container{
+    position: relative;
+}
+
+.header{
+    position: fixed;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin:0;
+    padding:20px 0;
+    z-index: 3;
+}
+
+.config{
+    text-align: right;
+    padding:0;
 }
 
 .card{
@@ -71,13 +110,51 @@ ul li a:hover{
     border:none;
 }
 
+.card-body{
+    width: 100%;
+    align-items: center;
+}
+
+.container-user-info{
+    padding:0;
+}
+
+.info-usuario{
+    width:400px;
+    height:100vh;
+    background-color:white;
+    position: fixed;
+    top:0;
+    right: -400px;
+    padding-top:100px;
+    justify-content: center;
+    text-align: center;
+    box-shadow: -2px 5px 5px rgba(0,0,0,.1);
+    transition: all .5s;
+    z-index: 2;
+}
+
 .user-info{
-    font-size: .9em;
     color:grey;
 }
 
 .user-info span{
     padding: 0 7px;
+}
+
+.botao-menu{
+    cursor: pointer;
+    padding-right:5px;
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}
+
+.botao-fechar{
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
 }
 
 .meta{
@@ -87,8 +164,7 @@ ul li a:hover{
 }
 
 .container-refeicoes{
-    height:85vh;
-    overflow: auto;
+    margin-top:125px;
 }
 
 .refeicao{
@@ -96,7 +172,6 @@ ul li a:hover{
 }
 
 .imagem-comida{
-    width:380px;
     height:360px;
     background-color: #efefef;
     border:1px solid #efefef;
@@ -109,6 +184,11 @@ ul li a:hover{
 .info-refeicao{
     text-align: left;
     padding-left:30px;
+}
+
+.titulo{
+    color:black;
+    margin-bottom:5px;
 }
 
 .info-refeicao h2{
@@ -163,6 +243,24 @@ ul li a:hover{
 }
 
 .texto-login{
-    padding: 40px 10% 0 10%;
+    padding: 40px 0 0 0;
     color:rgb(51, 51, 51);
 }
+
+@media only screen and (max-width: 600px) {
+    .info-usuario{
+        width:100%;
+        right: -100%;
+        font-size: 1.2em;
+    }
+  }
+
+  @media only screen and (max-width: 767px) {
+    .info-refeicao{
+        text-align: center;
+        padding:20px 0;
+    }
+  }
+
+
+  
